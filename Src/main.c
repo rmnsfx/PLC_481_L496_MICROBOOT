@@ -57,6 +57,10 @@
 		uint16_t app_crc_from_flash = 0x00;
 		uint32_t app_size_from_flash = 0x00;
 		uint16_t app_current_crc = 0x00;
+		
+		uint16_t boot_crc_from_flash = 0x00;
+		uint32_t boot_size_from_flash = 0x00;
+		uint16_t boot_current_crc = 0x00;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,9 +91,9 @@ uint32_t read_flash(uint32_t addr)
 	return (*(__IO uint32_t*)addr);
 }
 
-uint16_t flash_crc16(uint32_t adr, volatile uint32_t byte_cnt)
+uint16_t flash_crc16(uint32_t adr, uint32_t byte_cnt)
 {
-	volatile register uint16_t crc = 0xFFFF;
+	register uint16_t crc = 0xFFFF;
 	static const uint16_t table[] =
 	{
 		0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
@@ -127,8 +131,8 @@ uint16_t flash_crc16(uint32_t adr, volatile uint32_t byte_cnt)
 	};
 
 	register uint8_t lut;
-	volatile uint8_t data;
-	//uint32_t adr = 0x08010000;
+	uint8_t data;
+	
 	/* CRC Generation Function */
 	while( byte_cnt--) /* pass through message buffer */
 	{
@@ -138,8 +142,6 @@ uint16_t flash_crc16(uint32_t adr, volatile uint32_t byte_cnt)
 		crc  = (crc >> 8) ^ table[lut];
 		
 		adr++;		
-		
-		//HAL_IWDG_Refresh(&hiwdg);
 	}
 	return crc;
 }
@@ -200,20 +202,20 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_TIM2_Init();
-  //MX_IWDG_Init();
+  MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
-	//HAL_IWDG_Refresh(&hiwdg);
-	
+	HAL_IWDG_Refresh(&hiwdg);				
 	
 	app_crc_from_flash = read_flash( (uint32_t)APP_CRC_ADR );			
-
-	app_size_from_flash = read_flash( (uint32_t)APP_SIZE );
-	
+	app_size_from_flash = read_flash( (uint32_t)APP_SIZE );	
 	app_current_crc = (uint16_t) flash_crc16(APP_START_ADDRESS, (uint32_t) app_size_from_flash);
 	
-		
-	JumpToApplication( (uint32_t) APP_START_ADDRESS );	
+//	boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
+//	boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );	
+//	boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
+	
+
 		
   /* USER CODE END 2 */
 
@@ -221,11 +223,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-				
+	
+		HAL_IWDG_Refresh(&hiwdg);				
   /* USER CODE END WHILE */		
 		
   /* USER CODE BEGIN 3 */		
-
+		if (app_crc_from_flash == app_current_crc)				
+		{
+			JumpToApplication( (uint32_t) APP_START_ADDRESS );	
+		}
+		
+		if (boot_crc_from_flash == boot_current_crc)				
+		{
+			JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
+		}
+		
 
   }
   /* USER CODE END 3 */
