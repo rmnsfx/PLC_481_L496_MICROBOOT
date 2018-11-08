@@ -85,6 +85,14 @@
 
 /* USER CODE BEGIN Private defines */
 
+#define BOOT_START_ADDRESS 0x8004000
+#define BOOT_CRC_ADR 0x8003F80
+#define BOOT_SIZE 0x8003FA0
+
+#define APP_START_ADDRESS 0x8010000
+#define APP_CRC_ADR 0x8003FC0
+#define APP_SIZE 0x8003FE0
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
