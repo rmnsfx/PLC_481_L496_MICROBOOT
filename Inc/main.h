@@ -86,12 +86,16 @@
 /* USER CODE BEGIN Private defines */
 
 #define BOOT_START_ADDRESS 0x8004000
+//page 6 (0x3000)
 #define BOOT_CRC_ADR 0x8003000
-#define BOOT_SIZE 0x8003FA0
+#define BOOT_SIZE 0x8003020
 
 #define APP_START_ADDRESS 0x8010000
+//page 7 (0x3800)
 #define APP_CRC_ADR 0x8003800
-#define APP_SIZE 0x8003020
+#define APP_SIZE 0x8003820
+
+#define VERSION 1.2
 
 /* USER CODE END Private defines */
 
