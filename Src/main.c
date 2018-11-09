@@ -215,7 +215,7 @@ int main(void)
 //	boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );	
 //	boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
 	
-
+//	JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
 		
   /* USER CODE END 2 */
 
