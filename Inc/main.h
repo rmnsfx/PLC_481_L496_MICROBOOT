@@ -95,7 +95,7 @@
 #define APP_CRC_ADR 0x8003800
 #define APP_SIZE 0x8003820
 
-#define VERSION 1.2
+#define VERSION 1.3
 
 /* USER CODE END Private defines */
 

@@ -55,7 +55,7 @@
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 		uint16_t app_crc_from_flash = 0x00;
-		uint32_t app_size_from_flash = 0x00;
+		uint32_t app_size_from_flash = 0x01;
 		uint16_t app_current_crc = 0x00;
 		
 		uint16_t boot_crc_from_flash = 0x00;
@@ -202,7 +202,7 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_TIM2_Init();
-  MX_IWDG_Init();
+  //MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
 	HAL_IWDG_Refresh(&hiwdg);				
@@ -211,11 +211,6 @@ int main(void)
 	app_size_from_flash = read_flash( (uint32_t)APP_SIZE );	
 	app_current_crc = (uint16_t) flash_crc16(APP_START_ADDRESS, (uint32_t) app_size_from_flash);
 	
-//	boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
-//	boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );	
-//	boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
-	
-//	JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
 		
   /* USER CODE END 2 */
 
@@ -232,11 +227,19 @@ int main(void)
 		{
 			JumpToApplication( (uint32_t) APP_START_ADDRESS );	
 		}
+		else		
+		{
+			boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
+			boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );					
+			boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
+		}
 		
 		if (boot_crc_from_flash == boot_current_crc)				
 		{
 			JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
 		}
+		else JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
+		
 		
 
   }
