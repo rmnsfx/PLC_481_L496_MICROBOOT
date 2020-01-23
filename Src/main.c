@@ -205,12 +205,25 @@ int main(void)
   //MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
-	HAL_IWDG_Refresh(&hiwdg);				
+	//HAL_IWDG_Refresh(&hiwdg);				
 	
 	app_crc_from_flash = read_flash( (uint32_t)APP_CRC_ADR );			
 	app_size_from_flash = read_flash( (uint32_t)APP_SIZE );	
-	app_current_crc = (uint16_t) flash_crc16(APP_START_ADDRESS, (uint32_t) app_size_from_flash);
 	
+	if(app_crc_from_flash != 0xFFFF)
+	{
+		app_current_crc = (uint16_t) flash_crc16(APP_START_ADDRESS, (uint32_t) app_size_from_flash);
+	}
+	else
+	{
+		for(int i=0; i < 3; i++)
+		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);		
+			HAL_Delay(250);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);		
+			HAL_Delay(250);
+		}
+	}
 		
   /* USER CODE END 2 */
 
@@ -225,21 +238,27 @@ int main(void)
   /* USER CODE BEGIN 3 */		
 		if (app_crc_from_flash == app_current_crc)				
 		{
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);		
+			HAL_Delay(150);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);		
+			
+			
 			JumpToApplication( (uint32_t) APP_START_ADDRESS );	
 		}
 		else		
-		{
-			boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
-			boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );					
-			boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
+		{			
+			//boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
+			//boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );					
+			//boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
+			
+			JumpToApplication( (uint32_t) BOOT_START_ADDRESS );
 		}
 		
-		if (boot_crc_from_flash == boot_current_crc)				
-		{
-			JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
-		}
-		else JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
-		
+		//if (boot_crc_from_flash == boot_current_crc)				
+		//{
+			//JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
+		//}
+		//else JumpToApplication( (uint32_t) BOOT_START_ADDRESS );		
 		
 
   }
