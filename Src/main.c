@@ -240,26 +240,14 @@ int main(void)
 		{
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);		
 			HAL_Delay(150);
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);		
-			
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);					
 			
 			JumpToApplication( (uint32_t) APP_START_ADDRESS );	
 		}
 		else		
 		{			
-			//boot_crc_from_flash = read_flash( (uint32_t)BOOT_CRC_ADR );			
-			//boot_size_from_flash = read_flash( (uint32_t)BOOT_SIZE );					
-			//boot_current_crc = (uint16_t) flash_crc16(BOOT_START_ADDRESS, (uint32_t) boot_size_from_flash);
-			
 			JumpToApplication( (uint32_t) BOOT_START_ADDRESS );
 		}
-		
-		//if (boot_crc_from_flash == boot_current_crc)				
-		//{
-			//JumpToApplication( (uint32_t) BOOT_START_ADDRESS );	
-		//}
-		//else JumpToApplication( (uint32_t) BOOT_START_ADDRESS );		
-		
 
   }
   /* USER CODE END 3 */
